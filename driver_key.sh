@@ -1,3 +1,10 @@
+#!/bin/bash
+#SBATCH -c 1                               # Request one core
+#SBATCH -t 0-7:00                         # Runtime in D-HH:MM format
+#SBATCH -p short                           # Partition to run in
+#SBATCH --mem=5GB                         # Memory total in MiB (for all cores)
+
+
 #########################################################
 # Ben Strober
 #########################################################
@@ -41,7 +48,6 @@ mhc_rsid_file="/n/groups/price/ldsc/reference_files/1000G_EUR_Phase3/MHC.rsid"
 ####################
 # Directory containing AlkesGrp 2024 formatted summary statistics
 alkesgrp_2024_sumstats_dir="/n/groups/price/ldsc/sumstats_formatted_2024/"
-
 
 
 
