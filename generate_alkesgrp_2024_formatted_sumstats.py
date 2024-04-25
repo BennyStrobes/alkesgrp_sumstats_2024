@@ -37,7 +37,7 @@ def check_if_sumstat_file_has_a1_a2(sumstat_2021_file):
 		f = gzip.open(sumstat_2021_file)
 		zipped = True
 	else:
-		f = gzip.open(sumstat_2021_file)
+		f = open(sumstat_2021_file)
 		zipped = False
 	sumstat_has_a1_a2 = False
 	for line in f:
@@ -372,8 +372,6 @@ def print_single_alkesgrp_2021_summarystat_file_to_sumstat_2024_dir(sumstat_2021
 
 
 
-
-
 ############################
 # Command line arguments
 #############################
@@ -386,11 +384,8 @@ mhc_rsid_file = sys.argv[6]  # exclude these rsids
 alkesgrp_2024_sumstats_dir = sys.argv[7] # Output dir
 alkesgrp_2024_sumstats_summary_file = sys.argv[8]  # Output summary file
 
-
 # Extract dictionary list of hapmap3 rsids and MHC rsids
 hapmap3_rsids = extract_dictionary_list_of_hapmap3_rsids(hapmap3_rsid_file, mhc_rsid_file)
-
-
 
 # Open file-handle for writing to alkesgrp 2024 sumstats summary file
 t_summary_2024 = open(alkesgrp_2024_sumstats_summary_file,'w')
@@ -402,8 +397,6 @@ t_summary_2024 = print_alkesgrp_2021_summary_statistics_into_2024_sumstats_dir(a
 
 # Print gazal lab summary statistics into alkesgrp 2024 sumstats dir
 t_summary_2024 = print_gazal_lab_summary_statistics_into_2024_sumstats_dir(gazal_lab_sumstats_dir, gazal_lab_sumstats_summary_file, hapmap3_rsids, alkesgrp_2024_sumstats_dir, t_summary_2024)
-
-
 
 # Close file handle
 t_summary_2024.close()
