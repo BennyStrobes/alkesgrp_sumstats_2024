@@ -29,14 +29,13 @@ while IFS=$'\t' read -r -a myArray
 do
     ((num_lines++))
 done < $alkesgrp_2024_trait_pair_file
-lines_per_job=$(( num_lines / num_jobs ))
+lines_per_job=$(( num_lines / num_jobs +1))
 start_line=$(( lines_per_job * job_number +1 ))
 end_line=$(( lines_per_job * (job_number+1) ))
 
 
-
-
-
+echo $job_number
+echo $num_jobs
 
 ############################################
 # Run LDSC genetic correlation analysis for all pairs of traits in this parrallel run
@@ -76,3 +75,4 @@ do
 	python ${ldsc_code_dir}ldsc.py --rg ${gwas_trait1_file_name}","${gwas_trait2_file_name} --ref-ld-chr ${ldscore_hg19_dir} --w-ld-chr ${sldsc_h19_weights_dir} --out ${ldsc_rg_results_dir}${trait1_identifier}":"${trait2_identifier}"_ldsc_rg"
 
 done < $alkesgrp_2024_trait_pair_file
+

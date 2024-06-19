@@ -19,6 +19,15 @@ def print_all_pairs_of_traits_to_trait_pair_output_file(alkesgrp_2024_sumstats_s
 		if head_count == 0:
 			head_count = head_count + 1
 			continue
+		# Error checking
+		if len(data) != 9:
+			print('assumption error')
+		# Only consider traits with signed z-scores for genetic correlation analysis
+		if data[7] != 'YES':
+			continue
+		# Only consider traits with allele info for genetic correlation analysis
+		if data[8] != 'YES':
+			continue
 		# Use trait-identifier as trait_name
 		traits.append(data[1])
 	f.close()
