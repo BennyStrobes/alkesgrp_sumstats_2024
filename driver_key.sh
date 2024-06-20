@@ -74,12 +74,14 @@ sldsc_h2_results_dir=${alkesgrp_2024_sumstats_root_dir}"sldsc_h2/"
 # Output directory containing LDSC genetic correlation (rg) estimates on 2024 summary statistics
 ldsc_rg_results_dir=${alkesgrp_2024_sumstats_root_dir}"ldsc_rg/"
 
+# Output directory containing QC analysis comparing h2 parameter to 2021 updates amongst overlapping traits
+qc_comparison_to_2021_update_dir=${alkesgrp_2024_sumstats_root_dir}"qc_comparison_to_2021_update/"
 
-# NEED TO FILTER OUT PASS_VenousThromboembolism_Ghouse2023
-# seem to be an issue with some traits containing no allele columns
 
+
+if false; then
 source /home/bes710/.bash_profile
-
+fi
 
 ####################
 # 1. Generate Alkesgrp 2024 formatted summary statistics
@@ -92,26 +94,23 @@ python3 generate_alkesgrp_2024_formatted_sumstats.py $alkesgrp_2021_sumstats_dir
 fi
 
 # Split summary statistics into EUR and EAS groups
-alkesgrp_2024_EUR_sumstats_summary_file=${alkesgrp_2024_sumstats_root_dir}"summary_statistics_EUR_2024.txt"
-alkesgrp_2024_EAS_sumstats_summary_file=${alkesgrp_2024_sumstats_root_dir}"summary_statistics_EAS_2024.txt"
-if false; then
+alkesgrp_2024_EUR_sumstats_summary_file=${alkesgrp_2024_sumstats_root_dir}"reference_files/summary_statistics_EUR_2024.txt"
+alkesgrp_2024_EAS_sumstats_summary_file=${alkesgrp_2024_sumstats_root_dir}"reference_files/summary_statistics_EAS_2024.txt"
+if false; then 
 python3 split_gwas_studies_into_eur_and_eas.py $alkesgrp_2024_sumstats_summary_file $alkesgrp_2024_EUR_sumstats_summary_file $alkesgrp_2024_EAS_sumstats_summary_file
 fi
 
 # Extract all pairs of traits within EUR and EAS groups
 # EUR
-alkesgrp_2024_EUR_trait_pair_file=${alkesgrp_2024_sumstats_root_dir}"summary_statistics_trait_pairs_EUR_2024.txt"
+alkesgrp_2024_EUR_trait_pair_file=${alkesgrp_2024_sumstats_root_dir}"reference_files/summary_statistics_trait_pairs_EUR_2024.txt"
 if false; then
 python3 extract_all_pairs_of_traits.py $alkesgrp_2024_EUR_sumstats_summary_file $alkesgrp_2024_EUR_trait_pair_file
 fi
-
 # EAS
-alkesgrp_2024_EAS_trait_pair_file=${alkesgrp_2024_sumstats_root_dir}"summary_statistics_trait_pairs_EAS_2024.txt"
+alkesgrp_2024_EAS_trait_pair_file=${alkesgrp_2024_sumstats_root_dir}"reference_files/summary_statistics_trait_pairs_EAS_2024.txt"
 if false; then
 python3 extract_all_pairs_of_traits.py $alkesgrp_2024_EAS_sumstats_summary_file $alkesgrp_2024_EAS_trait_pair_file
 fi
-
-
 
 
 
@@ -124,7 +123,6 @@ sbatch run_sldsc_on_all_2024_summary_statistics.sh $alkesgrp_2024_EUR_sumstats_s
 # EAS
 sbatch run_sldsc_on_all_2024_summary_statistics.sh $alkesgrp_2024_EAS_sumstats_summary_file $alkesgrp_2024_sumstats_dir $ldsc_code_dir $ldsc_eas_baseline_ld_hg19_annotation_dir $ref_1kg_eas_hg19_genotype_dir $sldsc_eas_h19_weights_dir $sldsc_h2_results_dir
 fi
-
 
 
 ####################
@@ -140,11 +138,55 @@ for job_number in $(seq 0 29); do
 done
 fi
 
-
-
+####################
+# 4. Organize S-LDSC heritability results
+####################
+# EUR
+alkesgrp_2024_EUR_h2_summary_file=${alkesgrp_2024_sumstats_root_dir}"sldsc_heritabilities_EUR_2024.txt"
 if false; then
-sh run_ldsc_genetic_correlation_on_2024_summary_statistics_debug.sh $alkesgrp_2024_EUR_trait_pair_file $alkesgrp_2024_sumstats_dir $ldsc_code_dir $ldscore_hg19_dir $sldsc_h19_weights_dir $ldsc_rg_results_dir $job_number $num_jobs 
+python3 organize_sldsc_h2_results.py $alkesgrp_2024_EUR_sumstats_summary_file $sldsc_h2_results_dir $alkesgrp_2024_EUR_h2_summary_file
+fi
+# EAS
+alkesgrp_2024_EAS_h2_summary_file=${alkesgrp_2024_sumstats_root_dir}"sldsc_heritabilities_EAS_2024.txt"
+if false; then
+python3 organize_sldsc_h2_results.py $alkesgrp_2024_EAS_sumstats_summary_file $sldsc_h2_results_dir $alkesgrp_2024_EAS_h2_summary_file
+fi
+
+####################
+# 5. Organize genetic correlation results
+####################
+# EUR
+alkesgrp_2024_EUR_genetic_corr_summary_file=${alkesgrp_2024_sumstats_root_dir}"ldsc_genetic_correlations_trait_pairs_EUR_2024.txt"
+if false; then
+python3 organize_ldsc_genetic_correlation_results.py $alkesgrp_2024_EUR_trait_pair_file $ldsc_rg_results_dir $alkesgrp_2024_EUR_genetic_corr_summary_file
+fi
+# EAS
+alkesgrp_2024_EAS_genetic_corr_summary_file=${alkesgrp_2024_sumstats_root_dir}"ldsc_genetic_correlations_trait_pairs_EAS_2024.txt"
+if false; then
+python3 organize_ldsc_genetic_correlation_results.py $alkesgrp_2024_EAS_trait_pair_file $ldsc_rg_results_dir $alkesgrp_2024_EAS_genetic_corr_summary_file
 fi
 
 
+####################
+# 6. QC analysis comparing h2 parameter to 2021 updates amongst overlapping traits
+####################
+if false; then
+sh qc_comparison_to_2021_sumstat_update.sh $alkesgrp_2024_EUR_h2_summary_file $alkesgrp_2024_EAS_h2_summary_file $alkesgrp_2024_EUR_genetic_corr_summary_file $alkesgrp_2024_EAS_genetic_corr_summary_file $alkesgrp_2024_sumstats_summary_file $qc_comparison_to_2021_update_dir
+fi
+
+
+
+####################
+# 7. Generate non-redundent trait list
+####################
+# EUR
+alkesgrp_2024_EUR_non_redundent_trait_file=${alkesgrp_2024_sumstats_root_dir}"non_redundent_traits_EUR_2024.txt"
+if false; then
+python3 generate_non_redundent_trait_list.py $alkesgrp_2024_sumstats_summary_file $alkesgrp_2024_EUR_h2_summary_file $alkesgrp_2024_EUR_genetic_corr_summary_file $alkesgrp_2024_EUR_non_redundent_trait_file
+fi
+# EAS
+alkesgrp_2024_EAS_non_redundent_trait_file=${alkesgrp_2024_sumstats_root_dir}"non_redundent_traits_EAS_2024.txt"
+if false; then
+python3 generate_non_redundent_trait_list.py $alkesgrp_2024_sumstats_summary_file $alkesgrp_2024_EAS_h2_summary_file $alkesgrp_2024_EAS_genetic_corr_summary_file $alkesgrp_2024_EAS_non_redundent_trait_file
+fi
 

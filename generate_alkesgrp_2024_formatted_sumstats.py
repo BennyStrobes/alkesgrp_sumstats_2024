@@ -180,6 +180,8 @@ def print_alkesgrp_2021_summary_statistics_into_2024_sumstats_dir(alkesgrp_2021_
 			else:
 				trait_reference = data[3].split('"')[1] + ',' + data[4].split('"')[0]
 		trait_references.append(trait_reference)
+		if trait_name == '':
+			pdb.set_trace()
 
 	f.close()
 	# Convert to numpy arrays
