@@ -128,7 +128,13 @@ def print_gazal_lab_summary_statistics_into_2024_sumstats_dir(gazal_lab_sumstats
 			MM, NN, signed_sumstat = print_single_alkesgrp_2021_summarystat_file_to_sumstat_2024_dir_w_o_a1_a2(sumstat_gazal_file, sumstat_2024_file, hapmap3_rsids)
 			allele_info = 'NO'
 
-		t_summary_2024.write(trait_name + '\t' + trait_identifier + '\t' +  trait_origin + '\t' + trait_reference + '\t' + str(NN) + '\t' + str(MM) + '\t' + trait_population + '\t' + signed_sumstat + '\t' + allele_info + '\n')
+		if signed_sumstat == 'YES' and allele_info == 'YES':
+			cross_trait_ldsc = 'YES'
+		else:
+			cross_trait_ldsc = 'NO'
+
+
+		t_summary_2024.write(trait_name + '\t' + trait_identifier + '\t' +  trait_origin + '\t' + trait_reference + '\t' + str(NN) + '\t' + str(MM) + '\t' + trait_population + '\t' + signed_sumstat + '\t' + allele_info + '\t' + cross_trait_ldsc + '\n')
 		t_summary_2024.flush()
 
 	return t_summary_2024
@@ -216,9 +222,14 @@ def print_alkesgrp_2021_summary_statistics_into_2024_sumstats_dir(alkesgrp_2021_
 			MM, NN, signed_sumstat = print_single_alkesgrp_2021_summarystat_file_to_sumstat_2024_dir_w_o_a1_a2(sumstat_2021_file, sumstat_2024_file, hapmap3_rsids)
 			allele_info = 'NO'
 
+		if signed_sumstat == 'YES' and allele_info == 'YES':
+			cross_trait_ldsc = 'YES'
+		else:
+			cross_trait_ldsc = 'NO'
+
 		#os.system('python ' + ldsc_code_dir + 'munge_sumstats.py --sumstats ' + sumstat_2024_file + ' --out ' + alkesgrp_2024_sumstats_dir + trait_identifier + '.sumstats_tmp ' + '--merge-alleles ' + hapmap3_rsid_file)
 
-		t_summary_2024.write(trait_name + '\t' + trait_identifier + '\t' +  trait_origin + '\t' + trait_reference + '\t' + str(NN) + '\t' + str(MM) + '\t' + trait_population + '\t' + signed_sumstat + '\t' + allele_info + '\n')
+		t_summary_2024.write(trait_name + '\t' + trait_identifier + '\t' +  trait_origin + '\t' + trait_reference + '\t' + str(NN) + '\t' + str(MM) + '\t' + trait_population + '\t' + signed_sumstat + '\t' + allele_info + '\t' + cross_trait_ldsc + '\n')
 		t_summary_2024.flush()
 	return t_summary_2024
 
@@ -424,7 +435,7 @@ hapmap3_rsid_file = sys.argv[5]  # limit to these rsids
 ldsc_code_dir = sys.argv[6]
 alkesgrp_2024_sumstats_dir = sys.argv[7] # Output dir
 alkesgrp_2024_sumstats_summary_file = sys.argv[8]  # Output summary file
-
+alkesgrp_2024_x_trait_ldsc_sumstats_summary_file = sys.argv[9]
 
 # Extract dictionary list of hapmap3 rsids and MHC rsids
 hapmap3_rsids = extract_dictionary_list_of_hapmap3_rsids(hapmap3_rsid_file)
@@ -432,7 +443,7 @@ hapmap3_rsids = extract_dictionary_list_of_hapmap3_rsids(hapmap3_rsid_file)
 
 # Open file-handle for writing to alkesgrp 2024 sumstats summary file
 t_summary_2024 = open(alkesgrp_2024_sumstats_summary_file,'w')
-t_summary_2024.write('Trait Name\tTrait Identifier\tOrigin\tReference\tN\tM\tPopulation\tSigned SumStat\tAllele Info\n')
+t_summary_2024.write('Trait Name\tTrait Identifier\tOrigin\tReference\tN\tM\tPopulation\tSigned SumStat\tAllele Info\tCross-Trait LDSC\n')
 
 # Print alkesgrp 2021 summary statistics into alkesgrp 2024 sumstats dir
 t_summary_2024 = print_alkesgrp_2021_summary_statistics_into_2024_sumstats_dir(alkesgrp_2021_sumstats_dir, alkesgrp_2021_sumstats_summary_file,hapmap3_rsid_file, hapmap3_rsids, alkesgrp_2024_sumstats_dir, t_summary_2024)
@@ -445,4 +456,20 @@ t_summary_2024 = print_gazal_lab_summary_statistics_into_2024_sumstats_dir(gazal
 t_summary_2024.close()
 
 
+
+# Print list of traits that are signed (and usable for cross-trait ldsc)
+f = open(alkesgrp_2024_sumstats_summary_file)
+t = open(alkesgrp_2024_x_trait_ldsc_sumstats_summary_file,'w')
+head_count = 0
+for line in f:
+	line = line.rstrip()
+	data = line.split('\t')
+	if head_count == 0:
+		head_count = head_count + 1
+		t.write(line + '\n')
+		continue
+	if data[7] == 'YES' and data[8] == 'YES':
+		t.write(line + '\n')
+f.close()
+t.close()
 

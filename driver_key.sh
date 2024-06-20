@@ -89,14 +89,15 @@ fi
 ####################
 # File to be created describing AlkesGrp 2024 summary statistics (to be made in same format as $alkesgrp_2021_sumstats_summary_file)
 alkesgrp_2024_sumstats_summary_file=${alkesgrp_2024_sumstats_root_dir}"summary_statistics_2024.txt"
+alkesgrp_2024_x_trait_ldsc_sumstats_summary_file=${alkesgrp_2024_sumstats_root_dir}"signed_summary_statistics_2024.txt"
 if false; then
-python3 generate_alkesgrp_2024_formatted_sumstats.py $alkesgrp_2021_sumstats_dir $alkesgrp_2021_sumstats_summary_file $gazal_lab_sumstats_dir $gazal_lab_sumstats_summary_file $hapmap3_rsid_file $ldsc_code_dir $alkesgrp_2024_sumstats_dir $alkesgrp_2024_sumstats_summary_file
+python3 generate_alkesgrp_2024_formatted_sumstats.py $alkesgrp_2021_sumstats_dir $alkesgrp_2021_sumstats_summary_file $gazal_lab_sumstats_dir $gazal_lab_sumstats_summary_file $hapmap3_rsid_file $ldsc_code_dir $alkesgrp_2024_sumstats_dir $alkesgrp_2024_sumstats_summary_file $alkesgrp_2024_x_trait_ldsc_sumstats_summary_file
 fi
 
 # Split summary statistics into EUR and EAS groups
 alkesgrp_2024_EUR_sumstats_summary_file=${alkesgrp_2024_sumstats_root_dir}"reference_files/summary_statistics_EUR_2024.txt"
 alkesgrp_2024_EAS_sumstats_summary_file=${alkesgrp_2024_sumstats_root_dir}"reference_files/summary_statistics_EAS_2024.txt"
-if false; then 
+if false; then
 python3 split_gwas_studies_into_eur_and_eas.py $alkesgrp_2024_sumstats_summary_file $alkesgrp_2024_EUR_sumstats_summary_file $alkesgrp_2024_EAS_sumstats_summary_file
 fi
 

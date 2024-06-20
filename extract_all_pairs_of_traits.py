@@ -20,8 +20,9 @@ def print_all_pairs_of_traits_to_trait_pair_output_file(alkesgrp_2024_sumstats_s
 			head_count = head_count + 1
 			continue
 		# Error checking
-		if len(data) != 9:
+		if len(data) != 10:
 			print('assumption error')
+			pdb.set_trace()
 		# Only consider traits with signed z-scores for genetic correlation analysis
 		if data[7] != 'YES':
 			continue
